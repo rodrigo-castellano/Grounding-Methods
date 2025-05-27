@@ -1,6 +1,6 @@
 # Grounding Methods for Neural-Symbolic AI
 
-This repository contains the code for the paper: **Grounding Methods for Neural-Symbolic AI** by Rodrigo Castellano Ontiveros, Francesco Giannini, Marco Gori, Giuseppe Marra and Michelangelo Diligenti.
+This repository contains the code for the paper: **Grounding Methods for Neural-Symbolic AI** by Rodrigo Castellano Ontiveros, Francesco Giannini, Marco Gori, Giuseppe Marra and Michelangelo Diligenti. Accepted at International Joint Conference on Artificial Intelligence (IJCAI) 2025. 
 
 ## Training
 
