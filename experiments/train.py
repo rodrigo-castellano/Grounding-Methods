@@ -284,23 +284,22 @@ def main(data_path, log_filename, use_WB, args):
 
     # EVALUATION
     print("\nEvaluation train", flush=True)
-    train_metrics = model.evaluate(data_gen_train)#,train_data=True,testing=True) 
+    train_eval_metrics = model.evaluate(data_gen_train, return_dict=True)
     print("\nEvaluation val", flush=True)
     if do_training:
-        valid_metrics =  model.evaluate(data_gen_valid)#,val_data=True,testing=True) 
+        valid_eval_metrics = model.evaluate(data_gen_valid, return_dict=True)
     else:
-        valid_metrics = [0.0]*len(train_metrics)    
+        valid_eval_metrics = {k: 0.0 for k in train_eval_metrics}
     print("\nEvaluation test", flush=True)
     start_inf = time.time()
-    test_metrics  =  model.evaluate(data_gen_test)#,test_data=True,testing=True)
+    test_eval_metrics = model.evaluate(data_gen_test, return_dict=True)
     end_inf = time.time()
     args.time_inference = np.round(end_inf - start_inf,2)
     print('Inference time:', np.round(end_inf - start_inf,2), 'seconds')
 
-    print('\nMetrics names:',model.metrics_names)
-    train_eval_metrics = dict(zip(model.metrics_names,train_metrics))
-    valid_eval_metrics = dict(zip(model.metrics_names,valid_metrics))
-    test_eval_metrics = dict(zip(model.metrics_names,test_metrics))
+    train_metrics = list(train_eval_metrics.values())
+    valid_metrics = list(valid_eval_metrics.values())
+    test_metrics = list(test_eval_metrics.values())
     training_info = history.history if do_training else None
 
     print('\nMetrics:',train_eval_metrics.keys()) 
