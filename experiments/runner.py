@@ -227,12 +227,15 @@ if __name__ == '__main__':
             if use_logger:
                 date = logger.date
                 log_filename_tmp = os.path.join(log_folder,'_tmp_log-{}-{}-seed_{}.csv'.format(args.run_signature,date,seed))
-                if logger.exists_run(args.run_signature,seed):   
-                    continue
-                # else:
-                #     print("Seed number ", seed, " not done. Exit")
+                # exists_run skipped: external orchestrators
+                # (run_baselines.py) may legitimately want to re-train the
+                # same (signature, seed) after changing eval knobs
+                # (tie-breaking seed, valid_negatives, etc) that don't
+                # affect the run_signature. Re-running is cheap vs the
+                # cost of silently using stale results.
+                # if logger.exists_run(args.run_signature,seed):
                 #     continue
-            else:   
+            else:
                 log_filename_tmp = None
 
             train_eval_metrics,valid_eval_metrics, test_eval_metrics, training_info = main(data_path,log_filename_tmp,use_WB,args)
