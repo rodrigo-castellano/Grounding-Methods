@@ -389,7 +389,8 @@ class MMapModelCheckpoint(tf.keras.callbacks.Callback):
 
             # Save checkpoint and info
             if self.filepath:
-                save_path = f'{self.filepath}.ckpt'
+                save_path = f'{self.filepath}.weights.h5'
+                os.makedirs(os.path.dirname(save_path), exist_ok=True)
                 self.model_.save_weights(save_path)
                 self.last_save_path = save_path
                 self.write_info(epoch+1, current_value)
@@ -1065,9 +1066,9 @@ class MRRMetric(tf.keras.metrics.Metric):
      of tensorflow_ranking MRRMetric but with an online check for ragged
      tensors."""
   def __init__(self, name='mrr', dtype=None, **kwargs):
-      super().__init__(name, dtype, **kwargs)
-      self.mrr = self.add_weight("total", initializer="zeros")
-      self._count = self.add_weight("count", initializer="zeros")
+      super().__init__(name=name, dtype=dtype, **kwargs)
+      self.mrr = self.add_weight(name="total", initializer="zeros")
+      self._count = self.add_weight(name="count", initializer="zeros")
       self.reset_state()
 
   def reset_state(self):
@@ -1088,7 +1089,7 @@ class MRRMetric(tf.keras.metrics.Metric):
       labels, predictions, _, _ = ragged_to_dense(labels, predictions, None)
 
     topn = tf.shape(predictions)[1] #  number of predictions per sample, which is the size of the second dimension of the predictions tensor
-    sorted_labels, = sort_by_scores(predictions, [labels], topn=topn, mask=None) # sort the labels by the predictions
+    sorted_labels, = sort_by_scores(predictions, [labels], topn=topn, mask=None, seed=0) # sort the labels by the predictions
     sorted_list_size = tf.shape(input=sorted_labels)[1] # usually is the same as topn, unless for example I only care about the top 3 predictions
     # Relevance = 1.0 when labels >= 1.0 to accommodate graded relevance.
     relevance = tf.cast(tf.greater_equal(sorted_labels, 1.0), dtype=tf.float32) # if the label is greater or equal to 1, then the relevance is 1, otherwise 0
@@ -1120,10 +1121,10 @@ class HitsMetric(tf.keras.metrics.Metric):
      of tensorflow_ranking MRRMetric but with an online check for ragged
      tensors."""
   def __init__(self, n, name='hits', dtype=None, **kwargs):
-      super().__init__('%s@%d' % (name, n), dtype, **kwargs)
+      super().__init__(name='%s@%d' % (name, n), dtype=dtype, **kwargs)
       self._n = n
-      self.hits = self.add_weight("total", initializer="zeros")
-      self._count = self.add_weight("count", initializer="zeros")
+      self.hits = self.add_weight(name="total", initializer="zeros")
+      self._count = self.add_weight(name="count", initializer="zeros")
       self.reset_state()
 
   def reset_state(self):
@@ -1144,7 +1145,7 @@ class HitsMetric(tf.keras.metrics.Metric):
       labels, predictions, _, _ = ragged_to_dense(labels, predictions, None)
 
     topn = tf.shape(predictions)[1]
-    sorted_labels, = sort_by_scores(predictions, [labels], topn=topn, mask=None)
+    sorted_labels, = sort_by_scores(predictions, [labels], topn=topn, mask=None, seed=0)
     sorted_list_size = tf.shape(input=sorted_labels)[1]
     # Relevance = 1.0 when labels >= 1.0 to accommodate graded relevance.
     relevance = tf.cast(tf.greater_equal(sorted_labels, 1.0), dtype=tf.float32)

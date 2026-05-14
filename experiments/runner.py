@@ -66,20 +66,23 @@ if __name__ == '__main__':
     
     # This is in case I want to take inputs from the command line
 
-    parser = argparse.ArgumentParser(description='Description of your script')  
+    parser = argparse.ArgumentParser(description='Description of your script')
     parser.add_argument("--d", default = None, help="dataset",nargs='+')
     parser.add_argument("--m", default = None, help="model",nargs='+')
     parser.add_argument("--g", default = None, help="grounder",nargs='+')
     parser.add_argument("--s", default = None, help="seed")
+    parser.add_argument("--epochs", default = None, help="training epochs (overrides hardcoded E=[100])")
 
     args = parser.parse_args()
     if args.s is not None:
         SEED = [ast.literal_eval(args.s) ]
-        assert isinstance(SEED, list) 
+        assert isinstance(SEED, list)
     if args.m is not None:
         MODEL_NAME = args.m
     if args.d is not None:
         DATASET_NAME = args.d
+    if args.epochs is not None:
+        E = [int(args.epochs)]
     if args.g is not None:
         GROUNDER = args.g
 
@@ -138,7 +141,11 @@ if __name__ == '__main__':
         # Data params
         args.corrupt_mode = 'TAIL' if ('countries' in dataset_name or 'ablation' in dataset_name or 'test' in dataset_name) else 'HEAD_AND_TAIL'
         args.num_negatives = neg  
-        args.valid_negatives = 100
+        # valid_negatives: None → exhaustive over the domain (matches
+        # test_negatives convention below). The prior hardcode of 100
+        # made keras-ijcai val use sampled-100 negs while keras-main +
+        # torch used exhaustive — breaking parity.
+        args.valid_negatives = 1000 if (dataset_name=='FB15k237' or dataset_name=='wn18rr') else None
         args.test_negatives = 1000 if (dataset_name=='FB15k237' or dataset_name=='wn18rr') else None # all possible negatives
         args.ragged = True
         args.format = "functional"
@@ -207,8 +214,12 @@ if __name__ == '__main__':
 
         if use_logger:
             logger = ns.utils.FileLogger(base_folder=log_folder)
-            if logger.exists_experiment(args.__dict__):
-                return
+            # exists_experiment skipped: it short-circuits on any seed
+            # already present in experiments.csv, which blocks legitimate
+            # reruns (e.g. after changing tie-breaking seed or other eval
+            # knobs). The per-seed exists_run check below is the right
+            # granularity for "this exact (signature, seed) was already
+            # done — skip".
 
         for seed in args.seed:
             args.seed_run_i = seed
