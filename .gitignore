@@ -1,0 +1,7 @@
+# Python bytecode
+__pycache__/
+*.pyc
+
+# Experiment outputs (large / transient)
+experiments/runs/
+experiments/runs_initial/
