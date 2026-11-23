@@ -3,6 +3,10 @@ message: "If you use this code, please cite the paper below."
 title: "Grounding Methods for Neural-Symbolic AI (code)"
 repository-code: "https://github.com/rodrigo-castellano/Grounding-Methods"
 license: Apache-2.0
+identifiers:
+  - type: doi
+    value: "10.5281/zenodo.24465158"
+    description: "Zenodo archive of the code (all versions)"
 authors:
   - family-names: "Castellano Ontiveros"
     given-names: "Rodrigo"

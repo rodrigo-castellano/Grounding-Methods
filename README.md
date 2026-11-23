@@ -3,6 +3,7 @@
 [![IJCAI 2025](https://img.shields.io/badge/IJCAI-2025-blue)](https://doi.org/10.24963/ijcai.2025/535)
 [![arXiv](https://img.shields.io/badge/arXiv-2507.08216-b31b1b)](https://arxiv.org/abs/2507.08216)
 [![PDF](https://img.shields.io/badge/PDF-open%20access-green)](https://www.ijcai.org/proceedings/2025/0535.pdf)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.24465158.svg)](https://doi.org/10.5281/zenodo.24465158)
 
 Official code for the IJCAI 2025 paper **"Grounding Methods for Neural-Symbolic AI"**
 by Rodrigo Castellano Ontiveros, Francesco Giannini, Marco Gori, Giuseppe Marra and Michelangelo Diligenti.
